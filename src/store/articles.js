@@ -8,23 +8,41 @@ const defaultState = {
 const auth = {
   namespaced: true,
   state: () => ({
-    articles: [],
+    data: [],
+    total: 0,
+    loading: false,
     active: null,
   }),
   actions: {
-    login: (_, data) => {
-      request.post("auth/login", data).then((response) => {
-        localStorage.setItem("token", response.data.data.token);
-        commit("setdata", { token: response.data.data.token, isAuth: true });
-      });
-    },
     newArticles: (_, data) => {
-      request.post("/articles", data).then((res) => {
+      return request.post("/articles", data).then((res) => {
         return res.data.data;
       });
     },
+    getArticles: (context, params) => {
+      context.commit("changeLoading", true);
+      return request({ url: "/articles", method: "GET", params: params }).then(
+        (res) => {
+          context.commit("pushArticle", res.data.data.articles);
+          context.commit("changeTotal", res.data.data.total);
+          context.commit("changeLoading", false);
+
+          return res.data.data;
+        }
+      );
+    },
   },
-  mutations: {},
+  mutations: {
+    pushArticle(state, articles) {
+      state.data = articles;
+    },
+    changeTotal(state, total) {
+      state.total = total;
+    },
+    changeLoading(state, loading) {
+      state.loading = loading;
+    },
+  },
 };
 
 export default auth;
