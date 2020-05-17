@@ -19,6 +19,23 @@ const auth = {
         return res.data.data;
       });
     },
+    deleteArticles: (_, _id) => {
+      return request({
+        url: `/articles/${_id}`,
+        method: "DELETE",
+      }).then((res) => {
+        return res.data.data;
+      });
+    },
+    editArticles: (_, { _id, data }) => {
+      return request({
+        url: `/articles/${_id}`,
+        data: { ...data },
+        method: "PUT",
+      }).then((res) => {
+        return res.data.data;
+      });
+    },
     getArticles: (context, params) => {
       context.commit("changeLoading", true);
       return request({ url: "/articles", method: "GET", params: params }).then(
@@ -31,10 +48,25 @@ const auth = {
         }
       );
     },
+    getArticle: (context, id) => {
+      context.commit("changeLoading", true);
+      return request({
+        url: "/articles/" + id,
+        method: "GET",
+      }).then((res) => {
+        context.commit("changeLoading", false);
+        context.commit("changeTotal", res.data.data);
+
+        return res.data.data;
+      });
+    },
   },
   mutations: {
     pushArticle(state, articles) {
       state.data = articles;
+    },
+    setActive: (state, article) => {
+      state.active = article;
     },
     changeTotal(state, total) {
       state.total = total;

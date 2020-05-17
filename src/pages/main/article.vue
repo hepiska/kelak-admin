@@ -42,9 +42,9 @@
               </v-card-text>
 
               <v-card-actions>
-                <v-btn color="orange" text>Edit</v-btn>
+                <v-btn color="orange" @click="openEdit(article._id)" text>Edit</v-btn>
 
-                <v-btn color="orange" text>Delete</v-btn>
+                <v-btn color="orange" @click="initiatedelete(article._id)" text>Delete</v-btn>
               </v-card-actions>
             </v-card>
           </v-col>
@@ -64,7 +64,27 @@
         </v-row>
       </template>
     </v-data-iterator>
-    <ArticleCreateModal :isOpen="isModalOpen" @changemodal="changeModal"></ArticleCreateModal>
+    <ArticleCreateModal
+      v-if="isModalOpen"
+      :isOpen="isModalOpen"
+      @changemodal="changeModal"
+      :_id="selectedId"
+    ></ArticleCreateModal>
+    <v-dialog v-model="confirmModal" max-width="290">
+      <v-card>
+        <v-card-title class="headline">Delete?</v-card-title>
+
+        <v-card-text>are you sure whant to delete?</v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <v-btn color="green darken-1" text @click="confirmModal = false">Cancel</v-btn>
+
+          <v-btn color="red" text @click="confirmDelete">yes</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -77,6 +97,8 @@ export default {
   name: "Article",
   data: () => ({
     isModalOpen: false,
+    confirmModal: false,
+    selectedId: null,
     sortBy: "created_at:desc",
     limit: 6,
     skip: 0,
@@ -123,7 +145,18 @@ export default {
     nextPage: function() {
       if (this.skip < this.totalPage) this.skip += 1;
     },
+    openEdit: function(_id) {
+      this.selectedId = _id;
+      this.isModalOpen = true;
+    },
+    initiatedelete: function(_id) {
+      this.selectedId = _id;
+      this.confirmModal = true;
+    },
 
+    confirmDelete: function() {
+      this.deleteArticles(this.selectedId);
+    },
     refetchArticle: function() {
       this.getArticles({
         sort: this.sortBy,
@@ -138,8 +171,11 @@ export default {
         path: this.$route.path,
         query: { ...this.$route.query, isModalOpen: this.isModalOpen }
       });
+      if (!this.isModalOpen) {
+        this.refetchArticle();
+      }
     },
-    ...mapActions("articles", ["getArticles"])
+    ...mapActions("articles", ["getArticles", "deleteArticles"])
   }
 };
 </script>

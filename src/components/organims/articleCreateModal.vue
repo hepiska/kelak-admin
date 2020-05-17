@@ -1,23 +1,12 @@
 <template>
   <v-row justify="center">
-    <v-dialog
-      v-model="isOpen"
-      persistent
-      min-height="700"
-      @click:outside="closeModal"
-      scrollable
-    >
+    <v-dialog v-model="isOpen" persistent min-height="700" @click:outside="closeModal" scrollable>
       <v-card>
         <v-card-title class="headline">Create Article</v-card-title>
         <v-card-text style="height: 70vh;">
           <v-form v-model="valid" ref="form">
             <!-- <v-container> -->
-            <v-text-field
-              v-model="form.data.name"
-              :rules="form.rules.name"
-              label="Name"
-              required
-            ></v-text-field>
+            <v-text-field v-model="form.data.name" :rules="form.rules.name" label="Name" required></v-text-field>
             <v-row>
               <v-col>
                 <v-text-field
@@ -28,10 +17,7 @@
                 ></v-text-field>
               </v-col>
               <v-col cols="2">
-                <v-checkbox
-                  v-model="form.data.isHeadline"
-                  label="Headline"
-                ></v-checkbox>
+                <v-checkbox v-model="form.data.isHeadline" label="Headline"></v-checkbox>
               </v-col>
               <v-col>
                 <vue-tags-input
@@ -53,20 +39,11 @@
             ></v-text-field>
             <v-row>
               <v-col cols="9">
-                <v-card
-                  v-if="images.length"
-                  class="d-flex flex-row mb-6"
-                  flat
-                  tile
-                >
+                <v-card v-if="images.length" class="d-flex flex-row mb-6" flat tile>
                   <v-row>
                     <v-col cols="3" v-for="image in images" :key="image">
                       <v-card>
-                        <v-img
-                          :src="image"
-                          aspect-ratio="1"
-                          class="grey lighten-2"
-                        />
+                        <v-img :src="image" aspect-ratio="1" class="grey lighten-2" />
                       </v-card>
                     </v-col>
                   </v-row>
@@ -91,23 +68,10 @@
           <v-spacer></v-spacer>
 
           <div v-if="!loading">
-            <v-btn color="green darken-1" text @click="closeModal"
-              >Disagree</v-btn
-            >
-            <v-btn
-              :disabled="!valid"
-              color="green darken-1"
-              text
-              @click="submit"
-              >Agree</v-btn
-            >
+            <v-btn color="green darken-1" text @click="closeModal">Disagree</v-btn>
+            <v-btn :disabled="!valid" color="green darken-1" text @click="submit">Agree</v-btn>
           </div>
-          <v-progress-linear
-            v-else
-            indeterminate
-            color="primary"
-            class="mb-0"
-          ></v-progress-linear>
+          <v-progress-linear v-else indeterminate color="primary" class="mb-0"></v-progress-linear>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -139,24 +103,29 @@ export default {
           summary: "",
           images: [],
           primaryImage: 0,
-          content: "",
+          content: ""
         },
         rules: {
-          name: [(v) => !!v || "Name is required"],
-          title: [(v) => !!v || "Title is required"],
-          summary: [(v) => !!v || "Summary is required"],
-        },
-      },
+          name: [v => !!v || "Name is required"],
+          title: [v => !!v || "Title is required"],
+          summary: [v => !!v || "Summary is required"]
+        }
+      }
     };
   },
   mounted() {
     this.dialog = this.isOpen;
+    if (this._id) {
+      this.getArticle(this._id).then(data => {
+        this.form.data = data;
+      });
+    }
   },
   watch: {
-    newCategory: "initItems",
+    newCategory: "initItems"
   },
   components: { Froala, VueTagsInput },
-  props: ["isOpen"],
+  props: ["isOpen", "_id"],
   computed: {
     images: {
       get: function() {
@@ -165,7 +134,7 @@ export default {
       set: function(images) {
         const newImages = [...this.form.data.images, images];
         this.form.data.images = newImages;
-      },
+      }
     },
     content: {
       get: function() {
@@ -173,8 +142,8 @@ export default {
       },
       set: function(content) {
         this.form.data.content = content;
-      },
-    },
+      }
+    }
   },
   methods: {
     closeModal() {
@@ -184,10 +153,10 @@ export default {
       const res = await Request({
         url: "/categories",
         method: "POST",
-        data: { name: tag.text },
-      }).then((_res) => ({
+        data: { name: tag.text }
+      }).then(_res => ({
         value: _res.data.data.category._id,
-        text: _res.data.data.category.name,
+        text: _res.data.data.category.name
       }));
       const newCategories = [...this.form.data.category, res];
       this.form.data.category = newCategories;
@@ -199,21 +168,30 @@ export default {
     },
     submit() {
       if (this.valid) {
+        this.loading = true;
+        const reqData = { ...this.form.data };
+        reqData.category = reqData.category
+          ? this.categorymap(_cat => _cat._id)
+          : [];
+        if (this._id) {
+          this.editArticles({ _id: this._id, data: reqData }).then(() => {
+            this.loading = false;
+            this.closeModal();
+          });
+        } else {
+          this.newArticles(reqData).then(() => {
+            this.loading = false;
+            this.closeModal();
+          });
+        }
       }
-      this.loading = true;
-      const reqData = { ...this.form.data };
-      reqData.category = reqData.category.map((_cat) => _cat._id);
-      this.newArticles(reqData).then(() => {
-        this.loading = false;
-        this.closeModal();
-      });
     },
     async onSelectedFile(file) {
       const base64file = await getBase64(file);
       const res = await Request({
         url: "/articles/upload/image",
         method: "POST",
-        data: { file: base64file, fileName: file.name },
+        data: { file: base64file, fileName: file.name }
       });
       this.images = res.data.data.url;
     },
@@ -228,21 +206,21 @@ export default {
           params: {
             skip: 0,
             limit: 6,
-            search: `name-regex:${this.newCategory}`,
-          },
+            search: `name-regex:${this.newCategory}`
+          }
         })
-          .then((res) =>
-            res.data.data.categories.map((_dat) => ({
+          .then(res =>
+            res.data.data.categories.map(_dat => ({
               text: _dat.name,
-              value: _dat._id,
+              value: _dat._id
             }))
           )
-          .then((_dat) => {
+          .then(_dat => {
             this.categoryAutoComplete = _dat;
           });
       }, 600);
     },
-    ...mapActions("articles", ["newArticles"]),
-  },
+    ...mapActions("articles", ["newArticles", "editArticles", "getArticle"])
+  }
 };
 </script>
