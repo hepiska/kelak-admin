@@ -194,7 +194,7 @@ export default {
   },
   watch: {
     skip: function() {
-      this.referchUser()
+      this.refetchUser()
     },
     search: function() {
       this.refetchUser()
@@ -233,6 +233,7 @@ export default {
     },
     confirmDelete: function() {
       this.deleteUsers(this.selectedId)
+      this.confirmModal=false;
     },
     nextPage: function() {
       if (this.skip < this.totalPage - 1) {
