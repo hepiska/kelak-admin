@@ -13,9 +13,7 @@
         </v-list-item-icon>
 
         <v-list-item-content>
-          <v-list-item-title>
-            {{ item.title }}
-          </v-list-item-title>
+          <v-list-item-title>{{ item.title }}</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
     </v-list>
@@ -40,8 +38,8 @@ export default {
     items: [
       { title: "Articles", icon: "mdi-book", link: "/articles" },
       { title: "User", icon: "mdi-face", link: "/users" },
-      { title: "Ads", icon: "mdi-help-box" },
-    ],
-  }),
+      { title: "Ads", icon: "mdi-help-box", link: "/ads" }
+    ]
+  })
 };
 </script>

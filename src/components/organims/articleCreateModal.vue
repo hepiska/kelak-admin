@@ -6,7 +6,25 @@
         <v-card-text style="height: 70vh;">
           <v-form v-model="valid" ref="form">
             <!-- <v-container> -->
-            <v-text-field v-model="form.data.name" :rules="form.rules.name" label="Name" required></v-text-field>
+            <v-row>
+              <v-col>
+                <v-text-field
+                  v-model="form.data.name"
+                  :rules="form.rules.name"
+                  label="Name"
+                  required
+                ></v-text-field>
+              </v-col>
+              <v-col>
+                <v-select
+                  :items="articleTypes"
+                  item-text="name"
+                  v-model="form.data.type"
+                  item-value="value"
+                  label="Type"
+                ></v-select>
+              </v-col>
+            </v-row>
             <v-row>
               <v-col>
                 <v-text-field
@@ -24,7 +42,6 @@
                   v-model="newCategory"
                   :tags="form.data.category"
                   @tags-changed="(newTags) => (tags = newTags)"
-                  @before-adding-tag="addCategory"
                   placeholder="add category"
                   :autocomplete-items="categoryAutoComplete"
                 />
@@ -92,12 +109,14 @@ export default {
       dialog: false,
       valid: false,
       categoryAutoComplete: [],
+      articleTypes: [],
       debounce: null,
       loading: false,
       form: {
         data: {
           name: "",
           title: "",
+          type: "",
           category: [],
           isHeadline: false,
           summary: "",
@@ -120,6 +139,7 @@ export default {
         this.form.data = data;
       });
     }
+    this.gettypes();
   },
   watch: {
     newCategory: "initItems"
@@ -163,6 +183,10 @@ export default {
       this.newCategory = "";
       // return addTag(res);
     },
+    async gettypes() {
+      const res = await Request({ url: "articles/types" });
+      this.articleTypes = res.data.data.articleTypes;
+    },
     contentChange(data) {
       this.content = data;
     },
@@ -171,7 +195,7 @@ export default {
         this.loading = true;
         const reqData = { ...this.form.data };
         reqData.category = reqData.category
-          ? this.categorymap(_cat => _cat._id)
+          ? reqData.category.map(_cat => _cat._id)
           : [];
         if (this._id) {
           this.editArticles({ _id: this._id, data: reqData }).then(() => {

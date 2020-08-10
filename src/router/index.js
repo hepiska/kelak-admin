@@ -2,6 +2,8 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../pages/Home.vue";
 import Main from "../pages/main/main.vue";
+import AdsCreate from "../pages/main/ads-create.vue";
+import Ads from "../pages/main/ads.vue";
 import User from "../pages/main/user.vue";
 import Article from "../pages/main/article.vue";
 
@@ -23,6 +25,16 @@ const routes = [
         path: "articles",
         component: Article,
       },
+      {
+        path: "/ads",
+        name: "Ads",
+        component: Ads,
+      },
+      {
+        path: "/ads/create",
+        name: "AdsCreate",
+        component: AdsCreate,
+      },
     ],
   },
   {
@@ -30,6 +42,7 @@ const routes = [
     name: "Login-page",
     component: Page,
   },
+
   {
     path: "/about",
     name: "About",
