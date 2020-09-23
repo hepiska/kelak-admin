@@ -14,5 +14,20 @@ import { mapState } from "vuex";
 
 export default {
   name: "User",
+  data: () => ({
+    isModalOpen: false,
+    confirmModal: false,
+    selectedId: null,
+    sortBy: "created_at:desc",
+    limit: 6,
+    skip: 0,
+    sortOptions: [
+      { title: "Title Asc", value: "title:asc" },
+      { title: "Title Desc", value: "title:desc" },
+      { title: "Created At Desc", value: "created_at:desc" },
+      { title: "Created At Asc", value: "created_at:asc" }
+    ],
+    search: ""
+  })
 };
 </script>

@@ -41,7 +41,8 @@
                 <vue-tags-input
                   v-model="newCategory"
                   :tags="form.data.category"
-                  @tags-changed="(newTags) => (tags = newTags)"
+                  @before-adding-tag="addCategory"
+                  @tags-changed="update"
                   placeholder="add category"
                   :autocomplete-items="categoryAutoComplete"
                 />
@@ -85,7 +86,7 @@
           <v-spacer></v-spacer>
 
           <div v-if="!loading">
-            <v-btn color="green darken-1" text @click="closeModal">Disagree</v-btn>
+            <v-btn color="red darken-1" text @click="closeModal">Disagree</v-btn>
             <v-btn :disabled="!valid" color="green darken-1" text @click="submit">Agree</v-btn>
           </div>
           <v-progress-linear v-else indeterminate color="primary" class="mb-0"></v-progress-linear>
@@ -158,7 +159,7 @@ export default {
     },
     content: {
       get: function() {
-        return this.form.data.images;
+        return this.form.data.content;
       },
       set: function(content) {
         this.form.data.content = content;
@@ -169,7 +170,16 @@ export default {
     closeModal() {
       this.$emit("changemodal");
     },
+    update(newTags) {
+      this.categoryAutoComplete = [];
+      this.form.data.category = newTags;
+    },
     async addCategory({ tag, addTag }) {
+      if (tag.value) {
+        addTag(tag);
+        return "";
+      }
+
       const res = await Request({
         url: "/categories",
         method: "POST",
@@ -178,10 +188,12 @@ export default {
         value: _res.data.data.category._id,
         text: _res.data.data.category.name
       }));
-      const newCategories = [...this.form.data.category, res];
-      this.form.data.category = newCategories;
+      // const newCategories = [...this.form.data.category, res];
+      // this.form.data.category = newCategories;
       this.newCategory = "";
-      // return addTag(res);
+      tag.value = res.value;
+      addTag(tag);
+      return "";
     },
     async gettypes() {
       const res = await Request({ url: "articles/types" });
@@ -191,11 +203,12 @@ export default {
       this.content = data;
     },
     submit() {
+      const reqData = { ...this.form.data };
       if (this.valid) {
         this.loading = true;
         const reqData = { ...this.form.data };
-        reqData.category = reqData.category
-          ? reqData.category.map(_cat => _cat._id)
+        reqData.categories = reqData.category
+          ? reqData.category.map(_cat => _cat.value)
           : [];
         if (this._id) {
           this.editArticles({ _id: this._id, data: reqData }).then(() => {
@@ -242,7 +255,7 @@ export default {
           .then(_dat => {
             this.categoryAutoComplete = _dat;
           });
-      }, 600);
+      }, 300);
     },
     ...mapActions("articles", ["newArticles", "editArticles", "getArticle"])
   }

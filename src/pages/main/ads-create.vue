@@ -11,6 +11,14 @@
             <v-text-field v-model="form.data.name" :rules="form.rules.name" label="Name" required></v-text-field>
           </v-col>
           <v-col>
+            <v-text-field
+              v-model="form.data.title"
+              :rules="form.rules.title"
+              label="Title"
+              required
+            ></v-text-field>
+          </v-col>
+          <v-col>
             <v-select
               :items="adsTypes"
               item-text="name"
@@ -41,11 +49,11 @@
         <v-row justify="center">
           <v-col>
             <h3>Start At</h3>
-            <v-date-picker v-model="form.data.start_at"></v-date-picker>
+            <v-date-picker v-model="form.data.start_at" :allowed-dates="startAtRule"></v-date-picker>
           </v-col>
           <v-col>
             <h3>End At</h3>
-            <v-date-picker v-model="form.data.end_at"></v-date-picker>
+            <v-date-picker v-model="form.data.end_at" :allowed-dates="endAtRule"></v-date-picker>
           </v-col>
         </v-row>
 
@@ -92,15 +100,21 @@
 <script>
 // @ is an alias to /src
 import Request from "../../services/base";
-import { mapState } from "vuex";
+import Froala from "../../components/organims/froalaEditor";
+
+import { mapActions, mapState } from "vuex";
 import { getBase64 } from "../../utils/helpers";
+import dayjs from "dayjs";
 
 export default {
   name: "CreateAds",
+  components: { Froala },
   data() {
     return {
       loading: false,
       adsTypes: [],
+      valid: false,
+
       form: {
         data: {
           name: "",
@@ -139,11 +153,40 @@ export default {
       const res = await Request({ url: "ads/types" });
       this.adsTypes = res.data.data.adsTypes;
     },
+    endAtRule(val) {
+      return this.form.data.start_at && this.form.data.start_at < val;
+    },
+    startAtRule(val) {
+      if (!this.form.data.end_at) {
+        return true;
+      }
+      return this.form.data.end_at > val;
+    },
     submit() {
-      console.log("this.form.data ", this.form.data);
+      const reqData = { ...this.form.data };
+      console.log("====req data", reqData);
       if (this.valid) {
         this.loading = true;
-        const reqData = { ...this.form.data };
+
+        reqData.end_at = dayjs(reqData.end_at)
+          .endOf("day")
+          .toJSON();
+        reqData.start_at = dayjs(reqData.start_at)
+          .startOf("day")
+          .toJSON();
+        // reqData.start_at = reqData.start_at.toISOString();
+        // reqData.end_at = reqData.end_at.toISOString();
+
+        if (this.$route.query.id) {
+        } else {
+          console.log("========", reqData);
+          this.newAds(reqData)
+            .then(data => {})
+            .catch(err => {
+              console.log(err);
+            });
+          // this.
+        }
       }
     },
     async onSelectedFile(file) {
@@ -156,11 +199,13 @@ export default {
       this.images = res.data.data.url;
     },
     contentChange(data) {
+      console.log("=====", data);
       this.content = data;
     },
     back() {
       this.$router.back();
-    }
+    },
+    ...mapActions("ads", ["newAds", "editAds", "getAds"])
   },
   computed: {
     images: {
@@ -176,13 +221,14 @@ export default {
           return this.form.data.images;
         },
         set: function(content) {
+          console.log("====", content);
           this.form.data.content = content;
         }
       }
     },
     content: {
       get: function() {
-        return this.form.data.images;
+        return this.form.data.content;
       },
       set: function(content) {
         this.form.data.content = content;

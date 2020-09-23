@@ -21,6 +21,7 @@
     "@johmun/vue-tags-input": "^2.1.0",
     "@voerro/vue-tagsinput": "^2.2.0",
     "core-js": "^3.6.4",
+    "dayjs": "^1.8.33",
     "postcss-loader": "^3.0.0",
     "raw-loader": "^4.0.1",
     "vue": "^2.6.11",
