@@ -40,9 +40,11 @@ const ads = {
       context.commit("changeLoading", true);
       return request({ url: "/ads", method: "GET", params: params }).then(
         (res) => {
-          context.commit("pushAds", res.data.data.articles);
+          context.commit("pushAds", res.data.data.ads);
           context.commit("changetotal", res.data.data.total);
           context.commit("changeLoading", false);
+
+          console.log("=====", res.data.data)
 
           return res.data.data;
         }

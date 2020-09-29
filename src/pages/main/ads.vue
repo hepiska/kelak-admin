@@ -59,7 +59,29 @@
               <v-card-subtitle class="pb-0">{{ ads.title }}</v-card-subtitle>
 
               <v-card-text class="text--primary">
-                <div>{{ ads.summary }}</div>
+                <div>
+                  <div>{{ ads.summary }}</div>
+                  <div>
+                    <span>category: </span>
+
+                    <span
+                      v-for="category in ads.categories_show"
+                      :key="category.id"
+                    >
+                      {{ category.name + ", " }},
+                    </span>
+                  </div>
+                  <div>
+                    <span>article: </span>
+
+                    <span
+                      v-for="article in ads.articles_show"
+                      :key="article.id"
+                    >
+                      {{ article.name + ", " }}
+                    </span>
+                  </div>
+                </div>
               </v-card-text>
 
               <v-card-actions>
@@ -186,9 +208,11 @@ export default {
       this.getAdses({
         sort: this.sortBy,
         search: "name-regex:" + this.search,
-        status: selected.status,
+        status: this.selectedStatus,
         limit: this.limit,
         skip: this.skip
+      }).then(() => {
+        console.log("====ades", this.adses);
       });
     },
     ...mapActions("ads", ["getAdses", "deleteAds"])
