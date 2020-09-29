@@ -17,7 +17,7 @@ import Request from "../../services/base";
 export default {
   name: "froalaEditor",
   props: {
-    value: String,
+    value: String
   },
   mounted() {
     this.model = this.value;
@@ -25,7 +25,7 @@ export default {
   data() {
     const self = this;
     return {
-      model: "",
+      model: this.value,
       config: {
         imageMaxSize: 5 * 1024 * 1024,
         imageEditButtons: [
@@ -41,7 +41,7 @@ export default {
           "imageDisplay",
           "imageStyle",
           "imageAlt",
-          "imageSize",
+          "imageSize"
         ],
         // Allow to upload PNG and JPG.
         imageAllowedTypes: ["jpeg", "jpg", "png"],
@@ -52,24 +52,24 @@ export default {
           },
           "image.beforeUpload": async function(images) {
             const newImg = [];
-            images.forEach((img) => {
+            images.forEach(img => {
               newImg.push(img);
             });
 
-            const newImages = newImg.map(async (file) => {
+            const newImages = newImg.map(async file => {
               const base64file = await getBase64(file);
               return Request({
                 url: "/articles/upload/image",
                 method: "POST",
-                data: { file: base64file, fileName: file.name },
-              }).then((res) => res.data.data.url);
+                data: { file: base64file, fileName: file.name }
+              }).then(res => res.data.data.url);
             });
             const resImage = await Promise.all(newImages);
             this.image.insert(resImage, null, null, this.image.get());
-          },
-        },
-      },
+          }
+        }
+      }
     };
-  },
+  }
 };
 </script>

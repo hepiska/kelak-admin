@@ -1,6 +1,12 @@
 <template>
   <v-row justify="center">
-    <v-dialog v-model="isOpen" persistent min-height="700" @click:outside="closeModal" scrollable>
+    <v-dialog
+      v-model="isOpen"
+      persistent
+      min-height="700"
+      @click:outside="closeModal"
+      scrollable
+    >
       <v-card>
         <v-card-title class="headline">Create Article</v-card-title>
         <v-card-text style="height: 70vh;">
@@ -35,7 +41,10 @@
                 ></v-text-field>
               </v-col>
               <v-col cols="2">
-                <v-checkbox v-model="form.data.isHeadline" label="Headline"></v-checkbox>
+                <v-checkbox
+                  v-model="form.data.isHeadline"
+                  label="Headline"
+                ></v-checkbox>
               </v-col>
               <v-col>
                 <vue-tags-input
@@ -57,11 +66,20 @@
             ></v-text-field>
             <v-row>
               <v-col cols="9">
-                <v-card v-if="images.length" class="d-flex flex-row mb-6" flat tile>
+                <v-card
+                  v-if="images.length"
+                  class="d-flex flex-row mb-6"
+                  flat
+                  tile
+                >
                   <v-row>
                     <v-col cols="3" v-for="image in images" :key="image">
                       <v-card>
-                        <v-img :src="image" aspect-ratio="1" class="grey lighten-2" />
+                        <v-img
+                          :src="image"
+                          aspect-ratio="1"
+                          class="grey lighten-2"
+                        />
                       </v-card>
                     </v-col>
                   </v-row>
@@ -80,16 +98,33 @@
               </v-col>
             </v-row>
           </v-form>
-          <Froala :content="content" @change="contentChange"></Froala>
+          <Froala
+            :value="content"
+            v-if="!loading"
+            @change="contentChange"
+          ></Froala>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
 
           <div v-if="!loading">
-            <v-btn color="red darken-1" text @click="closeModal">Disagree</v-btn>
-            <v-btn :disabled="!valid" color="green darken-1" text @click="submit">Agree</v-btn>
+            <v-btn color="red darken-1" text @click="closeModal"
+              >Disagree</v-btn
+            >
+            <v-btn
+              :disabled="!valid"
+              color="green darken-1"
+              text
+              @click="submit"
+              >Agree</v-btn
+            >
           </div>
-          <v-progress-linear v-else indeterminate color="primary" class="mb-0"></v-progress-linear>
+          <v-progress-linear
+            v-else
+            indeterminate
+            color="primary"
+            class="mb-0"
+          ></v-progress-linear>
         </v-card-actions>
       </v-card>
     </v-dialog>

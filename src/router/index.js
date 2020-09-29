@@ -35,6 +35,11 @@ const routes = [
         name: "AdsCreate",
         component: AdsCreate,
       },
+      {
+        path: "/ads/:_id",
+        name: "adsEdit",
+        component: AdsCreate,
+      },
     ],
   },
   {
