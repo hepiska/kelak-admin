@@ -5,7 +5,7 @@ const defaultState = {
   isAuth: false,
 };
 
-const ads = {
+const user = {
   namespaced: true,
   state: () => ({
     data: [],
@@ -14,43 +14,43 @@ const ads = {
     active: null,
   }),
   actions: {
-    newAds: (_, data) => {
-      return request.post("/ads", data).then((res) => {
+    newUser: (_, data) => {
+      return request.post("/user", data).then((res) => {
         return res.data.data;
       });
     },
-    deleteAds: (_, _id) => {
+    deleteUser: (_, _id) => {
       return request({
-        url: `/ads/${_id}`,
+        url: `/user/${_id}`,
         method: "DELETE",
       }).then((res) => {
         return res.data.data;
       });
     },
-    editAds: (_, { _id, data }) => {
+    editUser: (_, { _id, data }) => {
       return request({
-        url: `/ads/${_id}`,
+        url: `/user/${_id}`,
         data: { ...data },
         method: "PUT",
       }).then((res) => {
         return res.data.data;
       });
     },
-    getAdses: (context, params) => {
+    getUsers: (context, params) => {
       context.commit("changeLoading", true);
-      return request({ url: "/ads", method: "GET", params: params }).then(
+      return request({ url: "/user", method: "GET", params: params }).then(
         (res) => {
-          context.commit("pushAds", res.data.data.ads);
+          context.commit("pushuser", res.data.data.users);
           context.commit("changetotal", res.data.data.total);
           context.commit("changeLoading", false);
           return res.data.data;
         }
       );
     },
-    getAds: (context, id) => {
+    getUser: (context, id) => {
       context.commit("changeLoading", true);
       return request({
-        url: "/ads/" + id,
+        url: "/user/" + id,
         method: "GET",
       }).then((res) => {
         context.commit("changeLoading", false);
@@ -61,11 +61,11 @@ const ads = {
     },
   },
   mutations: {
-    pushAds(state, articles) {
-      state.data = articles;
+    pushuser(state, users) {
+      state.data = users;
     },
-    setActive: (state, article) => {
-      state.active = article;
+    setActive: (state, user) => {
+      state.active = user;
     },
     changetotal(state, total) {
       state.total = total;
@@ -76,4 +76,4 @@ const ads = {
   },
 };
 
-export default ads;
+export default user;

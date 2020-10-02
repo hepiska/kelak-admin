@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 import Home from "../pages/Home.vue";
 import Main from "../pages/main/main.vue";
 import AdsCreate from "../pages/main/ads-create.vue";
+import UserCreate from "../pages/main/user-create.vue";
 import Ads from "../pages/main/ads.vue";
 import User from "../pages/main/user.vue";
 import Article from "../pages/main/article.vue";
@@ -20,6 +21,16 @@ const routes = [
       {
         path: "users",
         component: User,
+      },
+      {
+        path: "/users/create/:_id",
+        component: UserCreate,
+        name: "userEdit"
+      },
+      {
+        path: "/users/create",
+        component: UserCreate,
+        name: "userCreate"
       },
       {
         path: "articles",

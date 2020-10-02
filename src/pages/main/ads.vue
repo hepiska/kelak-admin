@@ -211,9 +211,7 @@ export default {
         status: this.selectedStatus,
         limit: this.limit,
         skip: this.skip
-      }).then(() => {
-        console.log("====ades", this.adses);
-      });
+      }).then(() => {});
     },
     ...mapActions("ads", ["getAdses", "deleteAds"])
   },
