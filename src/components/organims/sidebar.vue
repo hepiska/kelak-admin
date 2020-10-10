@@ -24,7 +24,9 @@
         </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title>User</v-list-item-title>
-          <v-list-item-subtitle>Roles</v-list-item-subtitle>
+          <v-list-item-subtitle>
+            <div type="button" @click="logout">logout</div>
+          </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
     </template>
@@ -40,6 +42,12 @@ export default {
       { title: "User", icon: "mdi-face", link: "/users" },
       { title: "Ads", icon: "mdi-help-box", link: "/ads" }
     ]
-  })
+  }),
+  methods: {
+    logout: function() {
+      localStorage.removeItem("token");
+      window.location = "/login";
+    }
+  }
 };
 </script>

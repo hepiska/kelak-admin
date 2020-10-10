@@ -13,12 +13,6 @@
     <v-btn :disabled="!valid" color="success" class="my-3" @click="validate">
       Login
     </v-btn>
-    <p class="text-left my-1">
-      or klik here to
-      <router-link to="/register" class="text-left my-1">
-        register
-      </router-link>
-    </p>
   </v-form>
 </template>
 
@@ -31,18 +25,18 @@ export default {
   data: () => ({
     valid: true,
     password: "",
-    passwordRules: [(v) => !!v || "Password is required"],
+    passwordRules: [v => !!v || "Password is required"],
     email: "",
     emailRules: [
-      (v) => !!v || "E-mail is required",
-      (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
-    ],
+      v => !!v || "E-mail is required",
+      v => /.+@.+\..+/.test(v) || "E-mail must be valid"
+    ]
   }),
 
   computed: {
     ...mapState({
-      isAuth: (state) => state.auth.isAuth,
-    }),
+      isAuth: state => state.auth.isAuth
+    })
   },
 
   mounted() {
@@ -54,9 +48,11 @@ export default {
   methods: {
     validate() {
       this.$refs.form.validate();
+      const self = this;
       if (this.valid) {
-        this.login({ email: this.email, password: this.password });
-        this.$router.replace("/");
+        this.login({ email: this.email, password: this.password }).then(() => {
+          window.location = "/";
+        });
       }
     },
     reset() {
@@ -65,7 +61,7 @@ export default {
     resetValidation() {
       this.$refs.form.resetValidation();
     },
-    ...mapActions("auth", ["login"]),
-  },
+    ...mapActions("auth", ["login"])
+  }
 };
 </script>

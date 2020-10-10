@@ -12,10 +12,11 @@ const auth = {
     isAuth: !!localStorage.getItem("token"),
   }),
   actions: {
-    login: (_, data) => {
-      request.post("auth/login", data).then((response) => {
+    login: (context, data) => {
+      return request.post("auth/login", data).then((response) => {
         localStorage.setItem("token", response.data.data.token);
-        commit("setdata", { token: response.data.data.token, isAuth: true });
+        context.commit("setdata", { token: response.data.data.token, isAuth: true });
+        return response.data.data
       });
     },
     initAuth: (_, data) => {

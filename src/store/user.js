@@ -15,7 +15,14 @@ const user = {
   }),
   actions: {
     newUser: (_, data) => {
-      return request.post("/user", data).then((res) => {
+      const filteredData = Object.keys(data).reduce((acc, _key) => {
+        if (data[_key] !== '') {
+          acc[_key] = data[_key];
+
+        }
+        return acc;
+      }, {})
+      return request.post("/user", filteredData).then((res) => {
         return res.data.data;
       });
     },

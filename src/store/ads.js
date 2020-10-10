@@ -15,7 +15,14 @@ const ads = {
   }),
   actions: {
     newAds: (_, data) => {
-      return request.post("/ads", data).then((res) => {
+      const filteredData = Object.keys(data).reduce((acc, _key) => {
+        if (data[_key] !== '') {
+          acc[_key] = data[_key];
+
+        }
+        return acc;
+      }, {})
+      return request.post("/ads", filteredData).then((res) => {
         return res.data.data;
       });
     },

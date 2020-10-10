@@ -58,12 +58,50 @@
               </v-col>
             </v-row>
 
-            <v-text-field
-              v-model="form.data.summary"
-              :rules="form.rules.summary"
-              label="Summary"
-              required
-            ></v-text-field>
+            <v-row>
+              <v-col cols="8">
+                <v-text-field
+                  v-model="form.data.summary"
+                  :rules="form.rules.summary"
+                  label="Summary"
+                  required
+                ></v-text-field>
+              </v-col>
+              <v-col
+                cols="4"
+                v-if="
+                  form.data.type === 'video' || form.data.type === 'podcast'
+                "
+              >
+                <v-text-field
+                  v-model="form.data.video_uri"
+                  label="Video Link"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="4" v-if="form.data.type === 'podcast'">
+                <v-text-field
+                  v-model="form.data.podcast_uri"
+                  label="Podcast Link"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="4">
+                <v-text-field
+                  v-model="form.data.source_name"
+                  label="Nama Sumber"
+                  required
+                ></v-text-field>
+              </v-col>
+              <v-col cols="4">
+                <v-text-field
+                  v-model="form.data.source_uris"
+                  label="Link Sumber"
+                  required
+                ></v-text-field>
+              </v-col>
+            </v-row>
+
             <v-row>
               <v-col cols="9">
                 <v-card
@@ -156,6 +194,10 @@ export default {
           category: [],
           isHeadline: false,
           summary: "",
+          video_uri: "",
+          podcast_uri: "",
+          source_name: "",
+          source_uri: "",
           images: [],
           primaryImage: 0,
           content: ""

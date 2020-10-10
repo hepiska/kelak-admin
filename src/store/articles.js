@@ -15,7 +15,16 @@ const auth = {
   }),
   actions: {
     newArticles: (_, data) => {
-      return request.post("/articles", data).then((res) => {
+
+      const filteredData = Object.keys(data).reduce((acc, _key) => {
+        if (data[_key] !== '') {
+          acc[_key] = data[_key];
+
+        }
+        return acc;
+      }, {})
+
+      return request.post("/articles", filteredData).then((res) => {
         return res.data.data;
       });
     },
