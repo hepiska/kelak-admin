@@ -159,7 +159,7 @@ const defaultData = {
   summary: "",
   images: [],
   category: [],
-  article: [{ text: "asasasa", value: "sasasa1" }],
+  article: [],
   primaryImage: 0,
   content: ""
 };
