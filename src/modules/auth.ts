@@ -4,33 +4,30 @@ const type = {
 }
 
 interface AuthType {
-  user: any | null
+  token: any | null
   isAuth: boolean
 }
-  
-const user = localStorage.getItem("user")
 
-const initialState: AuthType  = {
-  user: user && JSON.parse(user),
-  isAuth: user? true : false,
+const token = localStorage.getItem("token")
+
+const initialState: AuthType = {
+  token: token,
+  isAuth: token ? true : false,
 }
 
 
-const AuthReducer  = (state = initialState, action: any): AuthType => {
-  let newState = { ...state }
+const AuthReducer = (state = initialState, action: any): AuthType => {
   switch (action.type) {
     case type.LOGIN:
       if (action.payload === null) {
         return initialState
       }
-      localStorage.setItem("puskesmas", action.payload.puskesmas)
-      localStorage.setItem("user", JSON.stringify(action.payload))
+      localStorage.setItem("token", action.payload.token)
 
-      newState = action.payload
-      return {user: action.payload, isAuth:true}
+      return { token: action.payload.token, isAuth: true }
     case type.LOGOUT:
       return {
-        user: null,
+        token: null,
         isAuth: false,
       }
     default:
@@ -38,8 +35,8 @@ const AuthReducer  = (state = initialState, action: any): AuthType => {
   }
 }
 
-export default  AuthReducer
- 
+export default AuthReducer
+
 
 export const LOGIN = (authData: any) => ({
   type: type.LOGIN,

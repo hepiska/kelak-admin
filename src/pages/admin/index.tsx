@@ -1,44 +1,42 @@
-import React , {useState , memo} from "react"
-import { Layout, Menu, Breadcrumb,  } from 'antd'
-import { RouteComponentProps, Switch , Route} from 'react-router-dom'
+import React, { useState, memo } from "react"
+import { Layout, Menu, Breadcrumb, Button } from 'antd'
+import { RouteComponentProps, Switch, Route, } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
-  UserOutlined,
-  VideoCameraOutlined,
-  UploadOutlined,
 } from '@ant-design/icons'
 import "./admin.css"
 import 'react-quill/dist/quill.snow.css'
 import { RouteItems } from './routes'
-import {LOGOUT} from '@src/modules/auth'
-const { Header, Content, Footer, Sider } = Layout
+import { LOGOUT } from '@src/modules/auth'
+const { Header, Content, Sider } = Layout
 const { SubMenu } = Menu
 
 
-interface AdminPagesProps  extends RouteComponentProps {
-  test?:boolean
+interface AdminPagesProps extends RouteComponentProps {
+  test?: boolean
 }
- 
 
-const AdminPages: React.FC <AdminPagesProps>= ({ history }) =>{
+
+const AdminPages: React.FC<AdminPagesProps> = ({ history }) => {
   const [collapsed, setIsCollapsed] = useState(false)
   const pos = history.location.pathname.split('/')
-  const user = useSelector((state: any )=> state?.auth?.user)
+  const dispatch = useDispatch()
+  const token = useSelector((state: any) => state?.auth?.token)
 
-  if(!user){
-    history.replace("/")
+  if (!token) {
+    history.replace("/login")
   }
 
   return (
     <Layout className="layout" style={{ minHeight: '100vh' }}>
       <Sider collapsible collapsed={collapsed} trigger={null}>
-        <div className="logo" />
+        <img src="/logo.png" className="logo" alt="logo" />
         <Menu theme="dark" mode="inline" defaultSelectedKeys={[pos[2] || "puskesmas"]}>
           {RouteItems.filter(item => !item.hideSidebar).map((item) => {
             return (
-              <Menu.Item key={item.key} icon={item.icon} onClick={() => {history.push(item.url)}}>
+              <Menu.Item key={item.key} icon={item.icon} onClick={() => { history.push(item.url) }}>
                 {item.name}
               </Menu.Item>
             )
@@ -47,11 +45,12 @@ const AdminPages: React.FC <AdminPagesProps>= ({ history }) =>{
 
       </Sider>
       <Layout className="site-layout">
-        <Header className="site-layout-background" style={{ padding: 0 }}>
-          {React.createElement(collapsed? MenuUnfoldOutlined : MenuFoldOutlined, {
+        <Header className="site-layout-background" style={{ padding: 20, justifyContent: "space-between", display: "flex" }}>
+          {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
             className: 'trigger',
-            onClick:() => setIsCollapsed(!collapsed),
+            onClick: () => setIsCollapsed(!collapsed),
           })}
+          <Button type="text" onClick={() => dispatch(LOGOUT())} danger>logout</Button>
         </Header>
         <Content
           className="site-layout-background"
@@ -62,13 +61,13 @@ const AdminPages: React.FC <AdminPagesProps>= ({ history }) =>{
           }}
         >
           <Switch>
-            {RouteItems.map(item => (<Route {...item} key={item.key}/> ))}
+            {RouteItems.map(item => (<Route {...item} key={item.key} />))}
           </Switch>
         </Content>
       </Layout>
 
     </Layout>
   )
-} 
+}
 
 export default memo(AdminPages)

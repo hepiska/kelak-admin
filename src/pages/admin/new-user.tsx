@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react"
 import { Form, Input, Button, Checkbox, Row, Col, message, Divider, Typography } from 'antd'
-import { createUser } from '@src/methods/user'
 import { useSelector } from 'react-redux'
 import { request } from '@src/services/base'
 

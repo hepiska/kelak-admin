@@ -12,13 +12,22 @@ export const parseQueryString = (link: any) => {
 
 export const objToQs = (obj: any) => Object.keys(obj).reduce((acc, key) => `${acc}${key}=${obj[key]}&`, '?')
 
-export const removeNullData = (obj: any ) => Object.keys(obj).reduce((acc: any, key: string) => {
-  const newData  = {...obj}
-  if(newData[key] !== undefined && newData[key] !== null) {
+export const removeNullData = (obj: any) => Object.keys(obj).reduce((acc: any, key: string) => {
+  const newData = { ...obj }
+  if (newData[key] !== undefined && newData[key] !== null) {
     acc[key] = newData[key]
   }
   return acc
-},{})
+}, {})
+
+export function getBase64(file: any) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+}
 
 
-export const hidetext = (text: string, number: number) : string =>  text.split("").map((car, idx) => text.length - number < idx ? "*": car).join("")
+export const hidetext = (text: string, number: number): string => text.split("").map((car, idx) => text.length - number < idx ? "*" : car).join("")

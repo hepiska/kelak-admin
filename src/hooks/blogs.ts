@@ -1,47 +1,49 @@
-import {useState, useEffect} from "react"
-import {getBlogs, deleteBlog} from '@src/methods/blogs'
+import { useState, useEffect } from "react"
+import { request } from '@src/services/base'
+import { message } from 'antd'
 
 
-export const useBlogs = ( isSnapShot?: boolean, puskesmas?: string ,limit?: number | undefined) => {
+
+
+
+export const useBlogs = (skip: number, search: string) => {
   const [blogs, setBlogs] = useState(null) as any
-  const [loading, setLoading] = useState(false) 
-  useEffect(() => {
-    let getData = getBlogs(puskesmas)
-    if(limit){
-      getData = getData.limit(limit)
-    }
+  const [loading, setLoading] = useState(false)
+  const [total, setTotal] = useState(0)
+  const [refetch, setRefetch] = useState(false)
 
-    if(isSnapShot){
+  const getBlogs = async (search: string, skip: number,) => {
+    try {
       setLoading(true)
-      getData.onSnapshot((_snapshot: any) => {
-        const data : Array<any> = []
-        _snapshot.forEach((_doc: any) => {
-          data.push({..._doc.data(), key: _doc.id})
-        })
-        setBlogs(data)
-        setLoading(false)
-
-      })
-    }else{
+      const searchCompose = `title-regex:${search}`
+      const res = await request.get('/articles', { params: { search: searchCompose, skip: skip || 0, limit: 10 } })
+      setLoading(false)
+      return {
+        articles: res.data.data.articles,
+        total: res.data.data.total
+      }
+    } catch (error) {
       setLoading(true)
-      getData.get().then((_snapshot: any) => {
-        const data : Array<any> = []
-        _snapshot.forEach((_doc: any) => {
-          data.push({..._doc.data(), key: _doc.id})
-        })
-        setLoading(false)
-        setBlogs(data)
-      })
+      message.error(error.message)
     }
-
-  },[puskesmas, isSnapShot, limit])
-
-
-  const deleteBlogAction = async (blogkey: string) => {
-    setLoading(true)
-    await deleteBlog(blogkey)
-    setLoading(false)
   }
 
-  return [{loading, blogs},{ deleteBlogAction }]
+  useEffect(() => {
+    getBlogs(search, skip).then(res => {
+      setBlogs(res?.articles)
+      setTotal(res?.total)
+    })
+
+  }, [skip, search, refetch])
+
+
+  const deleteBlogAction = async (blogkey?: string) => {
+    if (!blogkey) return
+    setLoading(true)
+    await request.delete('/articles/' + blogkey)
+    setLoading(false)
+    return
+  }
+
+  return [{ loading, blogs, total, refetch }, { deleteBlogAction, setRefetch }]
 }

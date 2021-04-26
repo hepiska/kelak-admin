@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { Row, Col, Divider, Button, Modal, Pagination, message } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
-import { deleteUser } from '@src/methods/user'
 import { Table, Tag, Space } from 'antd'
 import { request } from '@src/services/base'
 
