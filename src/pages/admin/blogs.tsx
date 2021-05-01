@@ -18,9 +18,9 @@ const AdminBlogs: React.FC<any> = ({ history }) => {
   const skip = Number(queries.get("skip")) || 0
   const isHeadline = Boolean(queries.get("isHeadline"))
   const category = queries.get("category")
-  const search = queries.get("search")
+  const search = queries.get("search") || ""
 
-  const [{ loading, blogs, total, refetch }, { deleteBlogAction, setRefetch }] = useBlogs(skip, { search: "", isHeadline, category, search })
+  const [{ loading, blogs, total, refetch }, { deleteBlogAction, setRefetch }] = useBlogs(skip, { isHeadline, category, search })
   const deleteArticle = async () => {
     try {
       if (selectedArticle) {
