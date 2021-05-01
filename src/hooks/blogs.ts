@@ -6,17 +6,27 @@ import { message } from 'antd'
 
 
 
-export const useBlogs = (skip: number, search: string) => {
+interface blogsFilterType {
+  category?: string | null,
+  search?: string,
+  isHeadline?: boolean
+}
+
+
+export const useBlogs = (skip: number, { search, category, isHeadline }: blogsFilterType) => {
   const [blogs, setBlogs] = useState(null) as any
   const [loading, setLoading] = useState(false)
   const [total, setTotal] = useState(0)
   const [refetch, setRefetch] = useState(false)
 
-  const getBlogs = async (search: string, skip: number,) => {
+  const getBlogs = async () => {
     try {
       setLoading(true)
-      const searchCompose = `title-regex:${search}`
-      const res = await request.get('/articles', { params: { search: searchCompose, skip: skip || 0, limit: 10 } })
+      let searchCompose = `title-regex:${search}`
+      if (isHeadline) {
+        searchCompose += `,isHeadline-eq:true`
+      }
+      const res = await request.get('/articles', { params: { search: searchCompose, skip: skip || 0, limit: 10, category } })
       setLoading(false)
       return {
         articles: res.data.data.articles,
@@ -29,12 +39,12 @@ export const useBlogs = (skip: number, search: string) => {
   }
 
   useEffect(() => {
-    getBlogs(search, skip).then(res => {
+    getBlogs().then(res => {
       setBlogs(res?.articles)
       setTotal(res?.total)
     })
 
-  }, [skip, search, refetch])
+  }, [skip, search, category, refetch, isHeadline, category])
 
 
   const deleteBlogAction = async (blogkey?: string) => {

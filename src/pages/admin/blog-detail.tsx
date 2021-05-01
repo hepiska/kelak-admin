@@ -127,7 +127,7 @@ const AdminBlogDetail: React.FC<any> = ({ history, location }) => {
                 try {
                   const base64 = await getBase64(file)
 
-                  const res = await request.post(`/articles/upload/image`, { file: base64, fileName: file.name }) as any
+                  const res = await request.post(`/articles/upload/image`, { file: base64, fileName: file?.name }) as any
                   if (onSuccess)
                     onSuccess({ url: res.data.data.url || '' }, res.data.data.url)
                 } catch (err) {
