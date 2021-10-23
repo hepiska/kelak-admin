@@ -12,6 +12,7 @@ import UserPage from "./user"
 import NewUserPage from "./new-user"
 import BlogsPage from "./blogs"
 import DetailBlogPage from "./blog-detail"
+import ReportPage from "./report"
 
 
 
@@ -27,6 +28,15 @@ interface RouteItem {
 }
 
 export const RouteItems: Array<RouteItem> = [
+  {
+    key: "report",
+    name: "Report",
+    url: "/admin",
+    path: "/admin",
+    icon: <BookOutlined />,
+    exact: true,
+    component: ReportPage
+  },
   {
     key: "blogs",
     name: "Blogs",
